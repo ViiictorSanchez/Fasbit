@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>chart</title>
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+<script src="https://www.amcharts.com/lib/3/pie.js"></script>
+<script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+<link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+<script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+
+<body>
+<div id="chartdiv"></div>
+
+<script type="text/javascript">
+
+var chart = AmCharts.makeChart( "chartdiv", {
+  "type": "pie",
+  "theme": "light",
+  "dataProvider": [ {
+    "country": "Lithuania",
+    "litres": 501.9
+  }, {
+    "country": "Czech Republic",
+    "litres": 301.9
+  }, {
+    "country": "Ireland",
+    "litres": 201.1
+  }, {
+    "country": "Germany",
+    "litres": 165.8
+  }, {
+    "country": "Australia",
+    "litres": 139.9
+  }, {
+    "country": "Austria",
+    "litres": 128.3
+  }, {
+    "country": "UK",
+    "litres": 99
+  }, {
+    "country": "Belgium",
+    "litres": 60
+  }, {
+    "country": "The Netherlands",
+    "litres": 50
+  } ],
+  "valueField": "litres",
+  "titleField": "country",
+   "balloon":{
+   "fixedPosition":true
+  },
+  "export": {
+    "enabled": true
+  }
+} );
+
+	var api_url1 = "http://18.191.39.172/cryptocompare/getItemAjax/exchange/load";
+	var redirect_ex = window.location.protocol + "//" + window.location.host + "/cryptocompare/";
+
+  google.load("visualization", "1", { packages: ["corechart"] });
+  google.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+
+  	var options = {
+      title: 'Market Volume'
+    };
+
+    $.ajax({
+        type: "GET",
+        url: api_url1,
+        dataType: 'json',
+        success: function(data) {
+        	// for pie chart
+            var arrValues = [];
+            data.forEach(function(element) {
+            	arrValues.push(
+                    {"Market":element.MARKET,
+                     "24H Volume":element.VOLUME24HOUR
+                    });
+            });
+            console.log(arrValues);
+            console.log(JSON.stringify(arrValues));
+            var stringified = JSON.stringify(arrValues);
+            var data = google.visualization.arrayToDataTable(arrValues);
+            // THE TYPE OF CHART (PieChart IN THIS EXAMPLE).
+                var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+                chart.draw(data, options); 
+        }
+    });
+}
+
+</script>
+</body>
+</html>
